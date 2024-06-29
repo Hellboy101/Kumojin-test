@@ -1,4 +1,6 @@
+import EventDetailsModel, { IEventDetails } from "../models/event.model";
 import { mongoClient } from "./mongoClient.service";
+
 
 export class EventService {
     private static instance: EventService;
@@ -12,9 +14,16 @@ export class EventService {
         return EventService.instance;
     }
 
-    public async createEvent(event: any) {
+    public async createEvent(event: IEventDetails) {
         return await mongoClient.client(async (db) => {
-            await db.collection(this.eventCollection).insertOne(event);
+            try {
+                const newEvent: IEventDetails = new EventDetailsModel(event);
+                const savedEvent = await newEvent.save();
+                return savedEvent;
+            } catch (error) {
+                console.error(error);
+                throw error;
+            }
         });
     }
 

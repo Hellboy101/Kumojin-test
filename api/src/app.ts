@@ -8,7 +8,7 @@ import dotenv from "dotenv";
 import indexRouter from './routes/index';
 import usersRouter from './routes/users';
 import { swaggerUi, swaggerSpec } from "./swagger";
-import { connectToDatabase } from "./handlers/mongoClient.service";
+import { connectToDatabase } from "./services/mongoClient.service";
 
 dotenv.config();
 const app = express();

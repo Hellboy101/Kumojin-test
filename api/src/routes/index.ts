@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { EventService } from '../handlers/events.service';
+import { EventService } from '../services/events.service';
 
 const router = express.Router();
 const eventService = new EventService();
@@ -7,7 +7,7 @@ const eventService = new EventService();
 
 /**
  * @swagger
- * /api/v1/events:
+ * /events:
  *   get:
  *     summary: Get all events
  *     responses:
@@ -27,7 +27,7 @@ router.get('/', (req: Request, res: Response, next: NextFunction) => {
 
 /**
  * @swagger
- * /api/v1/events/insert:
+ * /events/insert:
  *   post:
  *     summary: Create a new event
  *     requestBody:
@@ -47,13 +47,13 @@ router.get('/', (req: Request, res: Response, next: NextFunction) => {
  *         description: Invalid request body
  */
 router.post('/insert', (req: Request, res: Response, next: NextFunction) => {
-    const { name, description, date } = req.body;
-    const newEvent = eventService.createEvent({ name, description, date });
+    const { name, description, date, location } = req.body;
+    const newEvent = eventService.createEvent({ name, description, date, location });
 });
 
 /**
  * @swagger
- * /api/v1/events/eventDetails:
+ * /events/eventDetails:
  *   get:
  *     summary: Get event details by ID
  *     parameters:
