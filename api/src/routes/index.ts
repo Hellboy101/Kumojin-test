@@ -5,17 +5,74 @@ const router = express.Router();
 const eventService = new EventService();
 
 
-/* GET home page. */
+/**
+ * @swagger
+ * /api/v1/events:
+ *   get:
+ *     summary: Get all events
+ *     responses:
+ *       200:
+ *         description: List of events
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Event'
+ */
 router.get('/', (req: Request, res: Response, next: NextFunction) => {
     const allEvents = eventService.getAllEvents();
     res.status(200).json(allEvents);
 });
 
+/**
+ * @swagger
+ * /api/v1/events/insert:
+ *   post:
+ *     summary: Create a new event
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Event'
+ *     responses:
+ *       201:
+ *         description: Event created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Event'
+ *       400:
+ *         description: Invalid request body
+ */
 router.post('/insert', (req: Request, res: Response, next: NextFunction) => {
     const { name, description, date } = req.body;
     const newEvent = eventService.createEvent({ name, description, date });
 });
 
+/**
+ * @swagger
+ * /api/v1/events/eventDetails:
+ *   get:
+ *     summary: Get event details by ID
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Event details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Event'
+ *       404:
+ *         description: Event not found
+ */
+// get event details by id */
 router.get('/eventDetails', (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.query;
     const event = eventService.getEventById(id as string);

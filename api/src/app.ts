@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 
 import indexRouter from './routes/index';
 import usersRouter from './routes/users';
+import { swaggerUi, swaggerSpec } from "./swagger";
 import { connectToDatabase } from "./handlers/mongoClient.service";
 
 dotenv.config();
@@ -24,6 +25,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
+// Swagger route
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // catch 404 and forward to error handler
 app.use(function(req : Request, res: Response, next: NextFunction) {
