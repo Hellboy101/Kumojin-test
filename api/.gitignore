@@ -1,0 +1,36 @@
+# Node.js
+node_modules
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Logs
+logs
+*.log
+*.log.*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by coverage testing tools
+coverage
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# dotenv environment variables file
+.env
+
+# TypeScript
+*.tsbuildinfo
+dist
+
+# VSCode
+.vscode/
+
+# Jest
+jest.config.js
