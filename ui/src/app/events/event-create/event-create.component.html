@@ -1,1 +1,22 @@
-<p>event-create works!</p>
+<div class="event-create-container">
+  <h1>Créer / Modifier un Événement</h1>
+  <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="name">Nom</label>
+      <input id="name" formControlName="name" type="text" class="form-control" placeholder="Nom de l'événement">
+    </div>
+    <div class="form-group">
+      <label for="date">Date</label>
+      <input id="date" formControlName="date" type="date" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="location">Lieu</label>
+      <input id="location" formControlName="location" type="text" class="form-control" placeholder="Lieu de l'événement">
+    </div>
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea id="description" formControlName="description" class="form-control" placeholder="Description de l'événement"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Enregistrer</button>
+  </form>
+</div>

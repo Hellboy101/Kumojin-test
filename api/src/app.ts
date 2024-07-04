@@ -1,4 +1,5 @@
 import express, { Request, Response, NextFunction } from "express";
+import cors from 'cors';
 import createError from 'http-errors';
 import path from 'path';
 import cookieParser from 'cookie-parser';
@@ -7,15 +8,20 @@ import dotenv from "dotenv";
 
 import indexRouter from './routes/index';
 import usersRouter from './routes/users';
+import eventRoutes from "./routes/eventRoutes";
 import { swaggerUi, swaggerSpec } from "./swagger";
 import { connectToDatabase } from "./services/mongoClient.service";
 
 dotenv.config();
 const app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+// Configurer CORS pour autoriser les requêtes venant de votre front-end
+app.use(cors({
+  origin: 'http://localhost:4200', // Remplacez cette URL par celle de votre front-end
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -25,6 +31,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/api', eventRoutes);
 
 // Swagger route
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -42,7 +49,10 @@ app.use(function(err: any, req: Request, res: Response, next: NextFunction) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.json({
+    message: err.message,
+    error: req.app.get('env') === 'development' ? err : {}
+  });
 });
 
 connectToDatabase()

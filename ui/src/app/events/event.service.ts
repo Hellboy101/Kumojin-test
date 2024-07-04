@@ -15,12 +15,12 @@ export class EventService {
     return this.http.get<EventDetails[]>(this.apiUrl);
   }
 
-  getEvent(id: string): Observable<EventDetails> {
+  getEventById(id: string): Observable<EventDetails> {
     return this.http.get<EventDetails>(`${this.apiUrl}/${id}`);
   }
 
   createEvent(event: Event): Observable<EventDetails> {
-    return this.http.post<EventDetails>(this.apiUrl, event);
+    return this.http.post<EventDetails>(`${this.apiUrl}/insert`, event);
   }
 
   updateEvent(id: string, event: Event): Observable<EventDetails> {

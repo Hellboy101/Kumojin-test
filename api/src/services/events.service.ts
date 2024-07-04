@@ -1,10 +1,7 @@
-import EventDetailsModel, { IEventDetails } from "../models/event.model";
-import { mongoClient } from "./mongoClient.service";
-
+import EventDetailsModel, { IEventDetails, IEventDetailsData } from "../models/event.model";
 
 export class EventService {
     private static instance: EventService;
-    private eventCollection: string = 'events';
 
     public static getInstance(): EventService {
         if (!EventService.instance) {
@@ -14,59 +11,77 @@ export class EventService {
         return EventService.instance;
     }
 
-    public async createEvent(event: IEventDetails) {
-        return await mongoClient.client(async (db) => {
-            try {
-                const newEvent: IEventDetails = new EventDetailsModel(event);
-                const savedEvent = await newEvent.save();
-                return savedEvent;
-            } catch (error) {
-                console.error(error);
-                throw error;
+    public async createEvent(event: IEventDetailsData) {
+        try {
+            console.log(event);
+            const newEvent: IEventDetails = new EventDetailsModel(event);
+            const savedEvent = await newEvent.save();
+            return savedEvent;
+        } catch (error) {
+            console.error('Error creating event:', error);
+            throw error;
+        }
+    }
+
+    public async getEventById(id: string): Promise<IEventDetailsData> {
+        try {
+            const eventDb = await EventDetailsModel.findById(id);
+            if (!eventDb) {
+                throw new Error('Event not found');
             }
-        });
+            const event: IEventDetails = eventDb.toObject();
+            event.id = eventDb._id;
+            delete event._id;
+            delete event.__v;
+            return event;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
     }
 
-    public async getEventById(id: string) {
-        const collection = await this.getCollection(this.eventCollection);
-        const event = await collection.findOne({ _id: id });
-        return event;
+    public async getAllEvents(): Promise<IEventDetailsData[]> {
+        try {
+            const events = await EventDetailsModel.find();
+            if (!events) {
+                throw new Error('No events found');
+            }
+            return events.map(eventDb => {
+                const event: IEventDetails = eventDb.toObject();
+                event.id = eventDb._id;
+                delete event._id;
+                delete event.__v;
+                return event;
+            });
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
     }
 
-    public async getAllEvents() {
-        const collection = await this.getCollection(this.eventCollection);
-        const events = await collection.find().toArray();
-        return events;
-    }
-
-    public async updateEvent(id: string, event: any) {
-        const collection = await this.getCollection(this.eventCollection);
-        await collection.updateOne({ _id: id }, { $set: event });
+    public async updateEvent(id: string, event: Partial<IEventDetails>) {
+        try {
+            const updatedEvent = await EventDetailsModel.findByIdAndUpdate(id, event, { new: true, runValidators: true });
+            if (!updatedEvent) {
+                throw new Error('Event not found');
+            }
+            return updatedEvent;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
     }
 
     public async deleteEvent(id: string) {
-        const collection = await this.getCollection(this.eventCollection);
-        await collection.deleteOne({ _id: id });
-    }
-
-    /**
-     * Get all events from the database
-     * @returns :Promise<any[]> - An array of event objects
-     */
-    public async getEvents() {
-        const collection = await this.getCollection(this.eventCollection);
-        const events = await collection.find().toArray();
-        return events;
-    }
-
-    /**
-     * Get a collection from the database
-     * @param collection :string - The name of the collection to get
-     * @returns :Promise<any> - The collection object
-     */
-    public async getCollection(collection: string) {
-        return await mongoClient.client(async (db) => {
-            return await db.collection(collection)
-        });
+        try {
+            const deletedEvent = await EventDetailsModel.findByIdAndDelete(id);
+            if (!deletedEvent) {
+                throw new Error('Event not found');
+            }
+            return deletedEvent;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
     }
 }

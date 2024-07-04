@@ -1,1 +1,9 @@
-<p>event-details works!</p>
+<div *ngIf="event">
+  <h1>{{ event.name }}</h1>
+  <p><strong>Date:</strong> {{ event.date | date:'fullDate' }}</p>
+  <p><strong>Location:</strong> {{ event.location }}</p>
+  <p><strong>Description:</strong> {{ event.description }}</p>
+</div>
+<div *ngIf="!event">
+  <p>Loading event details...</p>
+</div>

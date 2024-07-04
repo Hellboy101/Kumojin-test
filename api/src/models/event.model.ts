@@ -8,15 +8,22 @@ export interface IEventDetails extends Document {
   description: string;
 }
 
-// Schéma Mongoose pour EventDetails
-const EventDetailsSchema: Schema = new Schema({
+export interface IEventDetailsData {
+  name: string;
+  description: string;
+  date: Date;
+  location: string;
+}
+
+export interface IEventDetailsModel extends IEventDetails, Document {}
+
+const EventDetailsSchema: Schema = new Schema<IEventDetails>({
   name: { type: String, required: true },
   date: { type: Date, required: true },
   location: { type: String, required: true },
   description: { type: String, required: true }
 });
 
-// Modèle Mongoose pour EventDetails
 const EventDetailsModel = model<IEventDetails>('EventDetails', EventDetailsSchema);
 
 export default EventDetailsModel;

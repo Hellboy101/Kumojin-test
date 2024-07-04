@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { EventService } from '../event.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -7,9 +7,9 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-event-create',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule],
   templateUrl: './event-create.component.html',
-  styleUrl: './event-create.component.scss'
+  styleUrls: ['./event-create.component.scss']
 })
 export class EventCreateComponent {
   eventForm: FormGroup;
@@ -26,14 +26,24 @@ export class EventCreateComponent {
   }
 
   ngOnInit() {
-    this.eventService.getEvent(this.eventId).subscribe(event => {
+    if (!this.eventId) {
+      return;
+    }
+    this.eventService.getEventById(this.eventId).subscribe(event => {
       this.eventForm.patchValue(event);
     });
   }
 
   onSubmit() {
-    this.eventService.updateEvent(this.eventId, this.eventForm.value).subscribe(() => {
-      this.router.navigate(['/events']);
-    });
+    if (!this.eventId) {
+      this.eventService.createEvent(this.eventForm.value).subscribe(() => {
+        this.router.navigate(['/events']);
+      });
+      return;
+    } else {
+      this.eventService.updateEvent(this.eventId, this.eventForm.value).subscribe(() => {
+        this.router.navigate(['/events']);
+      });
+    }
   }
 }

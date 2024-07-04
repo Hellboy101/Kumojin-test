@@ -18,8 +18,11 @@ export class EventDetailsComponent {
 
   ngOnInit() {
     const eventId = this.route.snapshot.params['id'];
-    this.eventService.getEvent(eventId).subscribe(event => {
-      this.event = event;
-    });
+    if (eventId) {
+      this.eventService.getEventById(eventId).subscribe({
+        next: (event) => this.event = event,
+        error: (error) => console.error('Error fetching event details:', error)
+      });
+    }
   }
 }
